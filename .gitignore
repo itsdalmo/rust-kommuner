@@ -1,4 +1,2 @@
 target
-subset.geo*
-kommuner.geo*
 examples/data/*.csv
