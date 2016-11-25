@@ -197,30 +197,3 @@ fn test_read_csv() {
     }
 }
 
-pub fn test_read_all() {
-    let csv = match read_csv("./examples/data/kommuner.csv") {
-        Ok(v)  => {
-            println!("Read {} csv records!", v.len()); v
-        },
-        Err(e) => panic!("{:?}", e),
-    };
-    let json = match read_geojson("./examples/data/kommuner.geojson") {
-        Ok(v)  => {
-            println!("Finished reading json!"); v
-        },
-        Err(e) => panic!("{:?}", e),
-    };
-
-    let kommuner = Counties::new(&json);
-
-    for record in csv.iter() {
-        match kommuner.lookup(&record.position()) {
-            Some(v) => {
-                println!("{:?}", v);
-            },
-            None    => println!("No kommune found!"),
-        }
-
-    }
-}
-
