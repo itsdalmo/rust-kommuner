@@ -27,10 +27,10 @@ pub type Result<T> = result::Result<T, error::Error>;
 
 #[derive(Debug, RustcDecodable)]
 pub struct Record {
-    index: i32,
-    testid: i64,
-    longitude: f64,
-    latitude: f64,
+    pub index: i32,
+    pub testid: i64,
+    pub longitude: f64,
+    pub latitude: f64,
 }
 
 impl Record {

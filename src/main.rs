@@ -1,7 +1,8 @@
 extern crate kommuner;
 extern crate clap;
+extern crate csv;
 
-use clap::{Arg, App, SubCommand};
+use clap::{Arg, App};
 
 fn main() {
     let matches = App::new("Rust geolookup")
@@ -48,10 +49,21 @@ fn main() {
 
     };
 
+    // Initialize a CSV writer
+    let mut file = match csv::Writer::from_file(&output) {
+        Ok(v)  => v,
+        Err(e) => panic!("Failed to create ouput: {:?}", e),
+    };
+
     // Loop over records - lookup and write to file
     for record in records.iter() {
-        let res = counties.lookup(&record.position());
-        println!("{:?}", res.unwrap());
+        let c = counties.lookup(&record.position()).unwrap_or("".to_string());
+        let r = (record.testid, c);
+        match file.encode(r) {
+            Ok(_)  => {},
+            Err(e) => {
+                println!("Failed to write record: {:?}", e);
+            },
+        }
     }
-
 }
