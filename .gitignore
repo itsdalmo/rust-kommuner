@@ -1,3 +1,5 @@
 target
 subset.geo*
 kommuner.geo*
+examples/data/kommuner*
+examples/data/*.csv

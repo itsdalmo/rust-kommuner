@@ -1,4 +1,5 @@
 extern crate regex;
+extern crate csv;
 extern crate serde_json;
 use std::{io, string, fmt, error};
 
@@ -8,6 +9,7 @@ pub enum Error {
     Encoding(string::FromUtf8Error),
     Regex(regex::Error),
     JSON(serde_json::Error),
+    CSV(csv::Error),
     Missing(&'static str),
 }
 
@@ -18,6 +20,7 @@ impl error::Error for Error {
             Error::Encoding(ref err) => err.description(),
             Error::Regex(ref err)    => err.description(),
             Error::JSON(ref err)     => err.description(),
+            Error::CSV(ref err)      => err.description(),
             Error::Missing(_)        => "Option returned None",
         }
     }
@@ -27,6 +30,7 @@ impl error::Error for Error {
             Error::Encoding(ref err) => Some(err),
             Error::Regex(ref err)    => Some(err),
             Error::JSON(ref err)     => Some(err),
+            Error::CSV(ref err)      => Some(err),
             _                        => None,
         }
     }
@@ -39,6 +43,7 @@ impl fmt::Display for Error {
             Error::Encoding(ref err) => write!(f, "Encoding error: {}", err),
             Error::Regex(ref err)    => write!(f, "Regex error: {}", err),
             Error::JSON(ref err)     => write!(f, "JSON error: {}", err),
+            Error::CSV(ref err)      => write!(f, "CSV error: {}", err),
             Error::Missing(ref err)  => write!(f, "{}() returned None.", err),
         }
     }
@@ -68,3 +73,8 @@ impl From<serde_json::Error> for Error {
     }
 }
 
+impl From<csv::Error> for Error {
+    fn from(err: csv::Error) -> Error {
+        Error::CSV(err)
+    }
+}
