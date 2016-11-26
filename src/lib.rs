@@ -8,6 +8,7 @@ extern crate serde_json;
 extern crate csv;
 extern crate geo;
 extern crate rustc_serialize;
+extern crate rayon;
 
 #[cfg(feature = "serde_derive")]
 include!("geojson.in.rs");
@@ -17,6 +18,7 @@ include!(concat!(env!("OUT_DIR"), "/geojson.rs"));
 
 pub mod error;
 
+use rayon::prelude::*;
 use geo::{Point, Polygon, LineString};
 use geo::algorithm::contains::Contains;
 use std::result;
@@ -126,13 +128,24 @@ impl Counties {
         }
         res
     }
+
+    /// Lookup multiple locations in paralell.
+    pub fn par_lookup_all(&self, p: &Vec<geo::Point<f64>>) -> Vec<Option<String>> {
+        let mut res = vec![];
+        p.par_iter().map(|&point| self.lookup(&point)).collect_into(&mut res);
+        res
+    }
 }
 
 #[test]
 fn test_counties() {
     let json = read_geojson("./examples/data/sample.geojson").unwrap();
     let res  = Counties::new(&json);
-    assert_eq!(res.lookup(&Point::new(60.524035, 5.552604)).unwrap(), "Osterøy");
+    let p    = Point::new(60.524035, 5.552604);
+    let v    = vec![p, p];
+    assert_eq!(res.lookup(&p).unwrap(), "Osterøy");
+    assert_eq!(res.lookup_all(&v)[0], Some("Osterøy".to_string()));
+    assert_eq!(res.par_lookup_all(&v)[0], Some("Osterøy".to_string()));
 }
 
 /// Read the 'kommuner.geojson' file. The structure is predefined and should

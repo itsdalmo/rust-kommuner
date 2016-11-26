@@ -30,12 +30,19 @@ fn main() {
                                .help("Path to the output file.")
                                .takes_value(true)
                                .required(false))
+                          .arg(Arg::with_name("parallel")
+                               .short("p")
+                               .long("parallel")
+                               .value_name("BOOLEAN")
+                               .help("Enable/disable parallel execution.")
+                               .takes_value(true)
+                               .required(false))
                           .get_matches();
 
     // Gather all input options
-    let geojson = matches.value_of("geojson").unwrap();
-    let input   = matches.value_of("input").unwrap();
-    let output  = matches.value_of("output").unwrap_or("out.csv");
+    let geojson  = matches.value_of("geojson").unwrap();
+    let input    = matches.value_of("input").unwrap();
+    let output   = matches.value_of("output").unwrap_or("out.csv");
 
     // Read input and geojson
     let counties = match kommuner::read_geojson(&geojson) {
