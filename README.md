@@ -20,3 +20,4 @@ test bench_lookup_all_last  ... bench: 175,942,486 ns/iter (+/- 8,378,414)
 test bench_lookup_first     ... bench:       7,137 ns/iter (+/- 1,317)
 test bench_lookup_last      ... bench:   4,530,849 ns/iter (+/- 377,375)
 ```
+

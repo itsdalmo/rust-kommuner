@@ -1,4 +1,3 @@
-extern crate regex;
 extern crate csv;
 extern crate serde_json;
 use std::{io, string, fmt, error};
@@ -7,7 +6,6 @@ use std::{io, string, fmt, error};
 pub enum Error {
     Io(io::Error),
     Encoding(string::FromUtf8Error),
-    Regex(regex::Error),
     JSON(serde_json::Error),
     CSV(csv::Error),
     Missing(&'static str),
@@ -18,7 +16,6 @@ impl error::Error for Error {
         match *self {
             Error::Io(ref err)       => err.description(),
             Error::Encoding(ref err) => err.description(),
-            Error::Regex(ref err)    => err.description(),
             Error::JSON(ref err)     => err.description(),
             Error::CSV(ref err)      => err.description(),
             Error::Missing(_)        => "Option returned None",
@@ -28,7 +25,6 @@ impl error::Error for Error {
         match *self {
             Error::Io(ref err)       => Some(err),
             Error::Encoding(ref err) => Some(err),
-            Error::Regex(ref err)    => Some(err),
             Error::JSON(ref err)     => Some(err),
             Error::CSV(ref err)      => Some(err),
             _                        => None,
@@ -41,7 +37,6 @@ impl fmt::Display for Error {
         match *self {
             Error::Io(ref err)       => write!(f, "I/O error: {}", err),
             Error::Encoding(ref err) => write!(f, "Encoding error: {}", err),
-            Error::Regex(ref err)    => write!(f, "Regex error: {}", err),
             Error::JSON(ref err)     => write!(f, "JSON error: {}", err),
             Error::CSV(ref err)      => write!(f, "CSV error: {}", err),
             Error::Missing(ref err)  => write!(f, "{}() returned None.", err),
@@ -58,12 +53,6 @@ impl From<io::Error> for Error {
 impl From<string::FromUtf8Error> for Error {
     fn from(err: string::FromUtf8Error) -> Error {
         Error::Encoding(err)
-    }
-}
-
-impl From<regex::Error> for Error {
-    fn from(err: regex::Error) -> Error {
-        Error::Regex(err)
     }
 }
 
