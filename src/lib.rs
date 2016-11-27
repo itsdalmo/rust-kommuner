@@ -80,6 +80,15 @@ impl County {
             false => None,
         }
     }
+
+    /// Lookup a record and return the testid and county if any.
+    /// Returns a tuple with the testid and name of the county.
+    pub fn lookup_record(&self, p: &Record) -> Option<(i64, String)> {
+        match self.poly.contains(&p.position()) {
+            true  => Some((p.testid, self.name.clone())),
+            false => None,
+        }
+    }
 }
 
 #[test]
@@ -120,19 +129,33 @@ impl Counties {
         // No county -> None
         None
     }
-    /// Lookup multiple locations and return their county name.
-    pub fn lookup_all(&self, p: &Vec<geo::Point<f64>>) -> Vec<Option<String>> {
-        let mut res: Vec<Option<String>> = vec![];
-        for point in p.iter() {
-            res.push(self.lookup(&point));
+
+    /// Lookup the county (if any) for a record.
+    /// Returns a tuple with the name of the county and testid.
+    pub fn lookup_record(&self, p: &Record) -> Option<(i64, String)> {
+        for kommune in self.list.iter() {
+            match kommune.lookup_record(p) {
+                Some(v) => {
+                    return Some(v);
+                },
+                None    => {},
+            }
         }
+        // No county -> None
+        None
+    }
+
+    /// Lookup multiple locations in parallel.
+    pub fn lookup_all(&self, p: &Vec<geo::Point<f64>>) -> Vec<Option<String>> {
+        let mut res = Vec::with_capacity(p.len());
+        p.par_iter().map(|&point| self.lookup(&point)).collect_into(&mut res);
         res
     }
 
-    /// Lookup multiple locations in paralell.
-    pub fn par_lookup_all(&self, p: &Vec<geo::Point<f64>>) -> Vec<Option<String>> {
-        let mut res = vec![];
-        p.par_iter().map(|&point| self.lookup(&point)).collect_into(&mut res);
+    /// Lookup multiple records in parallel.
+    pub fn lookup_all_records(&self, p: &Vec<Record>) -> Vec<Option<(i64, String)>> {
+        let mut res = Vec::with_capacity(p.len());
+        p.par_iter().map(|rec| self.lookup_record(&rec)).collect_into(&mut res);
         res
     }
 }
@@ -145,7 +168,6 @@ fn test_counties() {
     let v    = vec![p, p];
     assert_eq!(res.lookup(&p).unwrap(), "Osterøy");
     assert_eq!(res.lookup_all(&v)[0], Some("Osterøy".to_string()));
-    assert_eq!(res.par_lookup_all(&v)[0], Some("Osterøy".to_string()));
 }
 
 /// Read the 'kommuner.geojson' file. The structure is predefined and should

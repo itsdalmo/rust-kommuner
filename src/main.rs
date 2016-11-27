@@ -63,14 +63,15 @@ fn main() {
     };
 
     // Loop over records - lookup and write to file
-    for record in records.iter() {
-        let c = counties.lookup(&record.position()).unwrap_or("".to_string());
-        let r = (record.testid, c);
-        match file.encode(r) {
-            Ok(_)  => {},
-            Err(e) => {
-                println!("Failed to write record: {:?}", e);
-            },
+    let res = counties.lookup_all_records(&records);
+    for r in res.iter() {
+        if r.is_some() {
+            match file.encode(r) {
+                Ok(_)  => {},
+                Err(e) => {
+                    println!("Failed to write record: {:?}", e);
+                },
+            }
         }
     }
 }

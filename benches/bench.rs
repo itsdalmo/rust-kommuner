@@ -63,35 +63,4 @@ fn bench_lookup_all_last(b: &mut Bencher) {
     b.iter(|| counties.lookup_all(&res));
 
 }
-#[bench]
-fn bench_par_lookup_all_first(b: &mut Bencher) {
-    let json = kommuner::read_geojson("./examples/data/kommuner.geojson").unwrap();
-    let counties = kommuner::Counties::new(&json);
-
-    // Grow a vector with 'last entries' only
-    let mut res = vec![];
-    let p = geo::Point::new(60.524035, 5.552604);
-    for _ in 1..100 {
-        res.push(p);
-    }
-
-    b.iter(|| counties.par_lookup_all(&res));
-
-}
-
-#[bench]
-fn bench_par_lookup_all_last(b: &mut Bencher) {
-    let json = kommuner::read_geojson("./examples/data/kommuner.geojson").unwrap();
-    let counties = kommuner::Counties::new(&json);
-
-    // Grow a vector with 'last entries' only
-    let mut res = vec![];
-    let p = geo::Point::new(59.419622, 10.466373);
-    for _ in 1..100 {
-        res.push(p);
-    }
-
-    b.iter(|| counties.par_lookup_all(&res));
-
-}
 
