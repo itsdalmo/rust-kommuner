@@ -1,3 +1,6 @@
+[![OSX/Linux](https://travis-ci.org/itsdalmo/rust-kommuner.svg?branch=master)](https://travis-ci.org/itsdalmo/rust-kommuner)
+[![Windows](https://ci.appveyor.com/api/projects/status/adismvrqb931okqd/branch/master?svg=true)](https://ci.appveyor.com/project/itsdalmo/rust-kommuner/branch/master)
+
 # Rust GEOJSON test
 
 Read geojson and stuff.
