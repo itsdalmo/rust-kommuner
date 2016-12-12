@@ -224,7 +224,7 @@ fn test_read_csv() {
     match res {
         Ok(v)    => {
             // TODO: This is the 2nd row. Why?
-            assert_eq!(v[0].testid, 2258426552);
+            assert_eq!(v[0].testid, 2200000002);
             assert_eq!(v[0].longitude, 11.0531);
             assert_eq!(v[0].latitude, 59.2761);
         },
